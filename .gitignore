@@ -1,0 +1,12 @@
+.vscode/*
+build/*
+out/*
+deploy/*
+
+*.elf
+*.nso
+*.npdm
+
+compile_commands.json
+cmake-build*/
+.idea/
