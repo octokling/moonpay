@@ -7,7 +7,7 @@
 
 #include <type_traits>
 
-//#include <nn/time.h>
+#include <nn/time.hpp>
 #include <types.h>
 
 namespace nn {
@@ -173,7 +173,7 @@ u64 GetThreadId(const nn::os::ThreadType* thread);
 void YieldThread();
 void SuspendThread(nn::os::ThreadType*);
 void ResumeThread(nn::os::ThreadType*);
-//void SleepThread(nn::TimeSpan);
+void SleepThread(nn::TimeSpan);
 void WaitThread(nn::os::ThreadType*);
 void SetThreadCoreMask(nn::os::ThreadType*, int, u64 mask);
 

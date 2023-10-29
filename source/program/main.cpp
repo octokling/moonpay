@@ -50,7 +50,7 @@
 #include "Events/Event.h"
 
 //paramètres
-
+#include "program/settings/shineCostParams.hpp"
 
 /*static const char *DBG_FONT_PATH   = "DebugData/Font/nvn_font_jis1.ntx";
 static const char *DBG_SHADER_PATH = "DebugData/Font/nvn_font_shader_jis1.bin";
@@ -120,8 +120,6 @@ HOOK_DEFINE_TRAMPOLINE(GameSystemInit) {
         
         Orig(thisPtr);
 
-        
-
     }
 };
 
@@ -137,7 +135,7 @@ HOOK_DEFINE_TRAMPOLINE(GameSystemInit) {
         gTextWriter->endDraw();
 
     }
-};/**/
+};*/
 
 bool islaunchedCooldown = false;
 int frameOfCooldown = 0;
@@ -205,6 +203,10 @@ HOOK_DEFINE_TRAMPOLINE(ControlHook) {
         Orig(scene);
 
         calculShineCost(scene);
+
+        if(al::isPadTriggerLeft(-1)){
+            Logger::log("Caught %i", shineCostParams::instance()->getShineCostInt());
+        }
 
         al::PlayerHolder* playerHolder = al::getScenePlayerHolder(scene);
         PlayerActorHakoniwa* playerActor = playerHolder->tryGetPlayer(0);
@@ -285,7 +287,6 @@ void initActorInitInfo(al::ActorInitInfo *info, StageScene *curScene, al::Placem
 
     PayToMoonEvent = new Event(curScene);
     mShineConstLayout = new ShineCostLayout("ShineCost", *lytInfo);
-    
     calculShineCost(curScene);
     //Logger::log("Stage Initied !\n");
 }
@@ -299,7 +300,19 @@ HOOK_DEFINE_TRAMPOLINE(SnapShotExeWait){
 
 //L'étoile de la boutique doit avoir le même prix que le prix du défi !
 
+al::SequenceInitInfo* initInfo;
+ulong test(){
 
+    __asm("STR X21, [X19,#0x208]"); // stores WorldResourceLoader into HakoniwaSequence
+
+    __asm("MOV %[result], X20"
+          : [result] "=r"(
+              initInfo));  // Save our scenes init info to a gloabl ptr so we can access it later
+    //Taked from CraftBoss (Super Mario Odyssey Online)
+
+    shineCostParams::createInstance(al::getCurrentHeap());
+    return 0x20;
+}
 
 
 extern "C" void exl_main(void* x0, void* x1) {
@@ -331,7 +344,7 @@ extern "C" void exl_main(void* x0, void* x1) {
     SnapShotExeWait::InstallAtSymbol("_ZN23StageSceneStateSnapShot7exeWaitEv");
 
     exl::patch::CodePatcher(0x4C8DD0).BranchLinkInst(reinterpret_cast<void*>(initActorInitInfo));
-
+    exl::patch::CodePatcher(0x50E89C).BranchLinkInst(reinterpret_cast<void*>(test)); 
     //GreyShineRefreshHook::InstallAtSymbol("_ZN16GameDataFunction10isGotShineE22GameDataHolderAccessorPK9ShineInfo");
     //test::InstallAtSymbol("_ZN16GameDataFunction11isEnableCapE22GameDataHolderAccessor");
     //test::InstallAtSymbol("_ZN16CapMessageLayout9startCoreEPK18CapMessageShowInfob");//Ceci est un test seulement !
