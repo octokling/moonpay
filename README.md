@@ -1,3 +1,5 @@
+PROJET MIT ACTUELLEMENT EN PAUSE, MAIS SERA REPRIS DANS QUELQUES MOIS ;)
+
 # Pay To Moon
 The "Pay To Moon" mod is a challenge where Mario must buy the moon. The more moons he owns, the more expensive they become, and random events occur to spice up the gameplay.
 
